@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
         sleep(sleepTime);
     }
     fclose(fp);
+    free(processAlias);
+    free(completePath);
 
     // Collect the last process
     pid = wait((int*) 0);
