@@ -1,0 +1,27 @@
+\documentclass{report}
+\usepackage[T1]{fontenc} % codifica dei font
+\usepackage[utf8]{inputenc} % lettere accentate da tastiera
+\usepackage[english]{babel} % lingua del documento
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Franco Enrico}
+\chead{\textbf{System and device programming}} 
+\rhead{Laboratory 1}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 1 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+Through the system call \texttt{system}, the list of files in the directory received from the command line is saved into the file \texttt{list.txt} using output redirection of command \texttt{ls}.
+
+The file \texttt{list.txt} must be read using \texttt{fscanf} because it is a ``text file'' and it is needed to read each single line which identifies a specific file to be sorted in a child process which has to be generated using the system call \texttt{fork}.
+In order to limit the number of processes launched by the main program, it is needed to count how many child processes has been already launched and has not terminated their execution yet. If the maximum number of concurrent processes is reached, it is needed to wait (using the system call \texttt{wait}) for the termination of one process.
+
+At the end of the reading of file \texttt{list.txt}, there will be one child still running which must be collected before proceeding to perform the global sort. The final sort is performed through a \texttt{system} which launches the command \texttt{cat} to concatenate all the files in the directory, piped to a \texttt{sort} which redirects the output to the file \texttt{all\_sorted.txt}.
+
+Each child has to use the system call \texttt{execlp} which permits to launch a bash command, specifying its parameters directly in the system call arguments. It is important that the last one is \texttt{NULL} (i.e.\@ \texttt{(char *) 0}). This version of \texttt{exec} permits to use the global variable \texttt{PATH}, so it is not needed to specify the entire path of the command which has to be executed.
+
+The program exploits the system call \texttt{sleep} in different parts of the code with random timing, in order to test different synchronization scenarios and different behaviors of the program.
+\end{document}

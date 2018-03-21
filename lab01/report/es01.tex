@@ -1,0 +1,30 @@
+\documentclass{report}
+\usepackage[T1]{fontenc} % codifica dei font
+\usepackage[utf8]{inputenc} % lettere accentate da tastiera
+\usepackage[english]{babel} % lingua del documento
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Franco Enrico}
+\chead{\textbf{System and device programming}} 
+\rhead{Laboratory 1}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 1 - Exercise 1}
+\begin{document}
+\section*{Exercise 1}
+The exercise is quite simple and the algorithm is straightforward without particular features.
+
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+The directory \texttt{data/} is created using the system call \texttt{system} which launches the command \texttt{mkdir}. If an error occures during the execution of the command \texttt{mkdir} the program will exit and return the value 2.
+
+At this point it is possible to create \texttt{n} files as specified in the text of the exercise.
+For \texttt{n} times it is needed to:
+\begin{enumerate}
+\item Generate the filename;
+\item Open the file or create it if it does not exist;
+\item Generate a random number \texttt{k};
+\item Write \texttt{k} random numbers in the file;
+\item Close the file.
+\end{enumerate}
+\end{document}
