@@ -15,7 +15,8 @@
 int main(int argc, char** argv) {
     int n, k, i, j, m;
     char *directoryName = "data/",
-        *fileName = (char *) malloc(MAX_LENGHT * sizeof(char));
+        *fileName = (char *) malloc(MAX_LENGHT * sizeof(char)),
+		*command = (char *) malloc(MAX_LENGHT * sizeof(char));
     int fd; // File descriptor
     srand(time(NULL));
 
@@ -25,7 +26,7 @@ int main(int argc, char** argv) {
             "Correct usage is %s n k \n"
             "n: number of files to create \n"
             "k: maximum random number \n", argv[0]);
-        return 1;
+        exit(1);
     }
 
     // Parameters processing
@@ -33,11 +34,10 @@ int main(int argc, char** argv) {
     k = atoi(argv[2]);
 
     // Subdirectory creation
-    // Check if aubdirectory already exists or create it
-    if(mkdir(directoryName, 0777) != 0) {
-        fprintf(stderr, "I cannot create the directory %s\n", directoryName);
-        return 2;
-    }
+	sprintf(command, "mkdir %s", directoryName);
+	if(system(command) != 0) {
+		exit(2);
+	}
 
     // Create n files
     for(i = 0; i < n; ++i) {
@@ -74,6 +74,7 @@ int main(int argc, char** argv) {
     }
 #endif
 
+	free(command);
     free(fileName);
 
     return 0;

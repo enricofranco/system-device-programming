@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
             "Correct usage is %s C dir \n"
             "C: maximum number of process which can be created \n"
             "dir: directory to process \n", argv[0]);
-        return 1;
+        exit(1);
     }
 
     // Parameters processing
@@ -52,8 +52,7 @@ int main(int argc, char** argv) {
 
     if((fp = fopen(listingFile, "r")) == NULL) {
         fprintf(stderr, "An error occured while opening file %s\n", listingFile);
-        free(command);
-        return 1;
+        exit(2);
     }
 
     // Sort each file in a child process
@@ -83,6 +82,7 @@ int main(int argc, char** argv) {
         sleep(sleepTime);
     }
     fclose(fp);
+	free(fileName);
 
     // Collect the last process
     pid = wait((int*) 0);
