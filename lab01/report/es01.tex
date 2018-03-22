@@ -1,7 +1,7 @@
 \documentclass{report}
-\usepackage[T1]{fontenc} % codifica dei font
-\usepackage[utf8]{inputenc} % lettere accentate da tastiera
-\usepackage[english]{babel} % lingua del documento
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \lhead{Franco Enrico}
@@ -16,7 +16,7 @@ The exercise is quite simple and the algorithm is straightforward without partic
 
 First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
 
-The directory \texttt{data/} is created using the system call \texttt{system} which launches the command \texttt{mkdir}. If an error occures during the execution of the command \texttt{mkdir} the program will exit and return the value 2.
+The directory \texttt{data/} is created using the system call \texttt{system} which launches the command \texttt{mkdir}. If an error occures during the execution of the command \texttt{mkdir}, the program will exit and return the value 2.
 
 At this point it is possible to create \texttt{n} files as specified in the text of the exercise.
 For \texttt{n} times it is needed to:
