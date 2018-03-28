@@ -1,0 +1,42 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 2}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 2 - Exercise 1}
+\begin{document}
+\section*{Exercise 1}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+The file specified on the command line must be read line by line by the parent process, so  it is needed to use \texttt{fopen} to open the file and \texttt{fgets} to read it line by line.
+
+The parent process (1) forks and executes different operations between itself and its child:
+\begin{itemize}
+\item The parent process (1) allocates two signal handlers which execute function \texttt{signalHandlerParent} for signals \texttt{SIGUSR1} and \texttt{SIGUSR2} and start reading the file, line by line, until the global variable \texttt{TERMINATE} is set to \texttt{FALSE}, rewinding the file when it terminates its reading.
+
+Before printing the read line, the parent tests the global variable \texttt{PRINT\_LINE} and it prints the read line only if the variable is set to \texttt{TRUE};
+\item The child process (2) allocates a signal handler, different from the previous one, which executes function \texttt{signalHandlerChild} for signal \texttt{SIGUSR2}, then it forks again:
+\begin{itemize}
+\item It (2) loops until the global variable \texttt{TERMINATE} is set to \texttt{FALSE} sending a signal \texttt{SIGUSR1} to the main process (1) at random intervals;
+\item Its child (3) sleeps 60 seconds, then it sends a signal to its parent (2), which will cause its termination and, in cascade, the termination of the main process.
+\end{itemize}
+\end{itemize}
+
+\paragraph{\texttt{signalHandlerChild}}
+Child process (2) has only to manage signal \texttt{SIGUSR2}, which will cause, in cascade, the termination of the entire program. To obtain this behavior, the handler sets the global variable \texttt{TERMINATE} to \texttt{TRUE}.
+
+\paragraph{\texttt{signalHandlerParent}}
+Parent process (1) has to manage both \texttt{SIGUSR1} and \texttt{SIGUSR2}.
+
+The first one will cause the inversion of the variable \texttt{PRINT\_LINE} which is obtained by a bitwise XOR with \texttt{TRUE}.
+
+The second one will cause the termination of the entire program. To obtain this behavior, the handler sets the global variable \texttt{TERMINATE} to \texttt{TRUE}.
+
+\end{document}

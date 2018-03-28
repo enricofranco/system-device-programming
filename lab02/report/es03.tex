@@ -1,0 +1,26 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 2}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 1 - Exercise 3}
+\begin{document}
+\section*{Exercise 3}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+The main thread generates two random arrays and stores them in two binary files according to the specifications (using the system calls \texttt{open} and \texttt{write}) and allocates three semaphores:
+\begin{itemize}
+\item \texttt{mutexRead} protects the critical section, because the variable \texttt{g}, where the content of files is read, is global (i.e.\@ shared among threads). This semaphore is initialized to 1 to permit the access to the critical section to first thread;
+\item \texttt{processing} used by the threads, inside the critical section, to inform the server that a new value is available into the variable \texttt{g}. This semaphore is initialized to 0 in order to block the server;
+\item \texttt{dataProcessed} used by the server, inside its loop, to inform the thread in the critical section that the data has been elaborated and the result is available into the variable \texttt{g}. This semaphore is initialized to 0 in order to block the thread in the critical section before printing the result.
+\end{itemize}
+
+In order to manage the termination, the clients will write value -1 into the variable \texttt{g} when the reading of the file is terminated so that the server can recognize such a situation. The server will terminate its execution after receiving the value -1 two (number of threads) times.
+\end{document}

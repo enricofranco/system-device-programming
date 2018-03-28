@@ -1,0 +1,27 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 2}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 2 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+The maximum tree height is received from the command line and it is stored on the global variable \texttt{n}.
+
+In order to properly stop the thread tree generation and to print the correct sequence of thread identifiers, each thread must know its level and its previous threads identifiers. The \texttt{struct thread\_t} stores an array of \texttt{pthread\_t} which identifies the sequence of threads and an \texttt{int} which identifies the thread level.
+
+Each thread tests its level:
+\begin{itemize}
+\item If it is lower than \texttt{n}, it copies in a new location the identifiers of previous threads, adds its own identifier and increments the level.
+\item If it is equal to \texttt{n}, it means that it is a leaf of the thread tree and the thread simply prints its identifier followed by the identifiers of previous threads.
+\end{itemize}
+\end{document}

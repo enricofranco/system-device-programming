@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
 	// Check the number of parameters
 	if(argc < 2) {
 		fprintf(stderr, "Parameters error \n"
-			"Correct usage is %s filename \n"
-			"filename: file to be read by the parent process \n", argv[0]);
+			"Correct usage is %s <filename> \n"
+			"<filename> file to be read by the parent process \n", argv[0]);
 		exit(1);
 	}
 
@@ -55,16 +55,19 @@ int main(int argc, char** argv) {
 
 void child() {
 	int sleepTime;
+	pid_t pid;
 	srand(time(NULL));
 	signal(SIGUSR2, signalHandlerChild);
 	if(fork() == 0) { // Child process
 		sleep(ENDING_TIME);
 	} else { // Parent process
 		while(TERMINATE == FALSE) {
-			sleepTime = rand() % MAX_SLEEP_TIME + MIN_SLEEP_TIME;
+			sleepTime = rand() % (MAX_SLEEP_TIME - MIN_SLEEP_TIME + 1) + MIN_SLEEP_TIME;
 			sleep(sleepTime);
 			kill(getppid(), SIGUSR1);
 		}
+		pid = wait((int*) 0);
+		fprintf(stdout, "(Child PID %d) Child process %d collected\n", getpid(), pid);
 	}
 	kill(getppid(), SIGUSR2);
 	return;

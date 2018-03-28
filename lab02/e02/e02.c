@@ -12,7 +12,7 @@
 void *threadFunction(void *argument);
 
 typedef struct thread_t {
-	long int* threads;
+	pthread_t* threads;
 	int level;
 } thread_t;
 
@@ -43,18 +43,14 @@ int main(int argc, char** argv) {
 #endif
 
 	int level = 0;
-	thread_t *sx, *dx;
-	sx = (thread_t*) malloc(sizeof(thread_t));
-	sx->threads = (long int*) malloc((level + 1) * sizeof(long int));
-	sx->level = level + 1;
+	thread_t *t;
+	t = (thread_t*) malloc(sizeof(thread_t));
+	t->threads = (pthread_t*) malloc((level + 1) * sizeof(pthread_t));
+	t->level = level + 1;
+	t->threads[0] = pthread_self();
 
-	dx = (thread_t*) malloc(sizeof(thread_t));
-	dx->threads = (long int*) malloc((level + 1) * sizeof(long int));
-	dx->level = level + 1;
-	sx->threads[0] = dx->threads[0] = pthread_self();
-
-	pthread_create(&tid1, NULL, threadFunction, (void*) sx);
-	pthread_create(&tid2, NULL, threadFunction, (void*) dx);
+	pthread_create(&tid1, NULL, threadFunction, (void*) t);
+	pthread_create(&tid2, NULL, threadFunction, (void*) t);
 
 #ifdef DBG
 	fprintf(stdout, "END   -> Thread %ld. Level %d terminated\n", pthread_self(), 0);
@@ -89,24 +85,19 @@ void *threadFunction(void *argument) {
 	}
 
 	pthread_t tid1, tid2;
-	thread_t *sx, *dx;
+	thread_t *t;
 
-	sx = (thread_t*) malloc(sizeof(thread_t));
-	sx->threads = (long int*) malloc((level + 1) * sizeof(long int));
-	sx->level = level + 1;
-
-	dx = (thread_t*) malloc(sizeof(thread_t));
-	dx->threads = (long int*) malloc((level + 1) * sizeof(long int));
-	dx->level = level + 1;
-
-	sx->threads[0] = dx->threads[0] = pthread_self();
+	t = (thread_t*) malloc(sizeof(thread_t));
+	t->threads = (pthread_t*) malloc((level + 1) * sizeof(pthread_t));
+	t->level = level + 1;
+	t->threads[0] = pthread_self();
 	for(i = 0; i < parent->level; i++)
-		sx->threads[i+1] = dx->threads[i+1] = parent->threads[i];
+		t->threads[i+1] = parent->threads[i];
 
-	sx->level = dx->level = level + 1;
+	t->level = level + 1;
 
-	pthread_create(&tid1, NULL, threadFunction, (void*) sx);
-	pthread_create(&tid2, NULL, threadFunction, (void*) dx);
+	pthread_create(&tid1, NULL, threadFunction, (void*) t);
+	pthread_create(&tid2, NULL, threadFunction, (void*) t);
 
 #ifdef DBG
 	fprintf(stdout, "END   -> Thread %ld. Level %d terminated\n", pthread_self(), level);
