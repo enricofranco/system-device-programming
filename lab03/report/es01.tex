@@ -1,0 +1,33 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 3}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 3 - Exercise 1}
+\begin{document}
+\section*{Exercise 1}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+Then, it is needed to check that the first argument represents a correct probability, i.e.\@ a number between 0 and 100, otherwise the program will exit and return the value 2.
+
+This solution uses six semaphores in order to synchronize consumer and producer threads:
+\begin{itemize}
+\item \texttt{normalEmpty} and \texttt{normalFull} are used to manage the normal priority queue, therefore initialized to \texttt{BUFFER\_SIZE} and 0, respectively;
+\item \texttt{urgentEmpty} and \texttt{urgentFull} are used to manage the high priority queue, therefore initialized to \texttt{BUFFER\_SIZE} and 0, respectively;
+\item \texttt{globalEmpty} and \texttt{globalFull} are used to simply notify that an element has been produced or consumed respectively. Therefore they are initialized to \texttt{BUFFER\_SIZE * 2} and 0, respectively.
+\end{itemize}
+A data in the buffer is described by \texttt{typedef struct bufferData}. 
+
+The producer waits on the \texttt{globalEmpty} semaphore before putting an element in the buffer and signals that it put an element on the \texttt{globalFull} semaphore. The consumer, viceversa, waits on the \texttt{globalFull} semaphore before extracting an element from a buffer and signals that an element has been extracted on the \texttt{globalEmpty} semaphore.
+
+The producer produces the element by adding the timestamp and the buffer identifier according to the probability \texttt{p}, then, after waiting on the \texttt{globalEmpty} semaphore, it adds the element to the proper buffer, following the canonical \emph{Producer \& Consumer} scheme (wait on the \texttt{empty} semaphore and signal on the \texttt{full} one) and finally it signals on the \texttt{globalFull} semaphore.
+
+The consumer, after waiting on \texttt{globalFull}, executes a \texttt{sem\_trywait} (non-blocking system call) on the \texttt{urgentFull} semaphore. If this call succeeds, the consumer consumes a data from the urgent buffer and it signals on the \texttt{urgentEmpty} semaphore, otherwise it waits on the \texttt{normalEmpty} semaphore, it consumea a data from the normal buffer and finally it signals on the \texttt{normalFull} semaphore.
+\end{document}

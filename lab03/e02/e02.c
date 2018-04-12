@@ -14,8 +14,15 @@ void* reader(void* argument);
 void* writer(void* argument);
 long long current_timestamp();
 
-pthread_mutex_t meR, meW, w;
-int nR = 0;
+typedef struct cond_t {
+	pthread_mutex_t me;
+	pthread_cond_t turn;	/* Event: someone else's turn */
+	int reading;
+	int writing;
+	int writers;
+} cond_t;
+
+cond_t cond;
 
 int main(int argc, char** argv) {
 	int n, i;
@@ -41,9 +48,13 @@ int main(int argc, char** argv) {
 	readersTid = (pthread_t*) malloc(n * sizeof(pthread_t));
 	writersTid = (pthread_t*) malloc(n * sizeof(pthread_t));
 
-	pthread_mutex_init(&meR, NULL);
-	pthread_mutex_init(&meW, NULL);
-	pthread_mutex_init(&w, NULL);
+	/* init */
+	pthread_mutex_init(&cond.me, NULL);
+	pthread_cond_init(&cond.turn, NULL);
+	cond.reading = 0;
+	cond.writing = 0;
+	cond.writers = 0;
+
 	tid = 1;
 
 	for(i = 0; i < n; i++) {
@@ -58,9 +69,6 @@ int main(int argc, char** argv) {
 		pthread_join(writersTid[i], NULL);
 	}
 
-	pthread_mutex_destroy(&meR);
-	pthread_mutex_destroy(&meW);
-	pthread_mutex_destroy(&w);
 	free(readersTid);
 	free(writersTid);
 
@@ -70,26 +78,29 @@ int main(int argc, char** argv) {
 void* reader(void* argument) {
 	long tid = (long) argument;
 	int usecs = rand() % (MAX_SLEEP_TIME - MIN_SLEEP_TIME + 1) + MIN_SLEEP_TIME;
-	usleep(usecs);
+	usleep(usecs * 1000);
 	fprintf(stdout, "Thread %02ld trying to read at time %lld\n", tid, current_timestamp());
 
-	pthread_mutex_lock(&meR);
-		nR++;
-		if(nR == 1) {
-			pthread_mutex_lock(&w);
+	pthread_mutex_lock(&cond.me);
+		if(cond.writers > 0) {
+			pthread_cond_wait(&cond.turn, &cond.me);
 		}
-	pthread_mutex_unlock(&meR);
+		while(cond.writing > 0) {
+			pthread_cond_wait(&cond.turn, &cond.me);
+		}
+		cond.reading++;
+	pthread_mutex_unlock(&cond.me);
 
 	// Read operation
 	fprintf(stdout, "Thread %02ld reading at time %lld\n", tid, current_timestamp());
 	usleep(READING_TIME * 1000);
 
-	pthread_mutex_lock(&meR);
-		nR--;
-		if(nR == 0) {
-			pthread_mutex_unlock(&w);
-		}
-	pthread_mutex_unlock(&meR);
+	fprintf(stdout, "Thread %02ld completed reading at time %lld\n", tid, current_timestamp());
+
+	pthread_mutex_lock(&cond.me);
+		cond.reading--;
+		pthread_cond_broadcast(&cond.turn);
+	pthread_mutex_unlock(&cond.me);
 
 	pthread_exit(NULL);
 }
@@ -97,20 +108,27 @@ void* reader(void* argument) {
 void* writer(void* argument) {
 	long tid = (long) argument;
 	int usecs = rand() % (MAX_SLEEP_TIME - MIN_SLEEP_TIME + 1) + MIN_SLEEP_TIME;
-	usleep(usecs);
+	usleep(usecs * 1000);
 	fprintf(stdout, "Thread %02ld trying to write at time %lld\n", tid, current_timestamp());
 
-	pthread_mutex_lock(&meW);
-		pthread_mutex_lock(&w);
-		// condition
+	pthread_mutex_lock(&cond.me);
+		cond.writers++;
+		while(cond.reading > 0 || cond.writing > 0) {
+			pthread_cond_wait(&cond.turn, &cond.me);
+		}
+		cond.writing++;
+	pthread_mutex_unlock(&cond.me);
 
-		// Write operation
-		fprintf(stdout, "Thread %02ld writing at time %lld\n", tid, current_timestamp());
-		usleep(WRITING_TIME * 1000);
+	// Write operation
+	fprintf(stdout, "Thread %02ld writing at time %lld\n", tid, current_timestamp());
+	usleep(WRITING_TIME * 1000);
+	fprintf(stdout, "Thread %02ld finished writing at time %lld\n", tid, current_timestamp());
 
-		// condition
-		pthread_mutex_unlock(&w);
-	pthread_mutex_unlock(&meW);
+	pthread_mutex_lock(&cond.me);
+		cond.writing--;
+		cond.writers--;
+		pthread_cond_broadcast(&cond.turn);
+	pthread_mutex_unlock(&cond.me);
 
 	pthread_exit(NULL);
 }

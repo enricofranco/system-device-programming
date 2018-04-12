@@ -1,0 +1,27 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 3}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 3 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+The basic idea is to proceed in reading or writing if it is safe, i.e.\@ read if no writing operation is running and write if no reading or writing operation is running, otherwise wait for the ``turn''. In order to do this, it is needed to keep track of the number of readers and writers:
+\begin{itemize}
+\item \texttt{writers} contains the number of threads intended to write;
+\item \texttt{writing} contains the number of threads ready to write;
+\item \texttt{reading} contains the number of threads ready to read.
+\end{itemize}
+By using those variables, a reader needs to wait if a writer is intended to write and until all writing operations have been completed. In a similar way, a writer needs to wait until all reading and possibly writing operations have been completed.
+
+After the execution of its own critical section, a thread needs to possibly wake up every other waiting thread, therefore a \texttt{cond\_broadcast} is used.
+\end{document}
