@@ -1,0 +1,28 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 4}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 4 - Exercise 1}
+\begin{document}
+\section*{Exercise 1}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+Then, it is needed to check that the second argument represents a correct size, i.e.\@ a positive number, otherwise the program will exit and return the value 2.
+
+The file is open and mapped in memory as an array of integers. In this way, any modification on the array will affect the original file, too. After this operation, the main program launches two threads which works in parallel on the left part and on the right part of the array, it waits for their termination and then it closes the file. Each thread performs a standard quicksort, receiving as arguments a \texttt{arg\_t} containing left and right indexes of the array.
+
+Before launching two new threads ``emulating'' recursive calls, each thread checks if the size of the sub-array to sort is greater than the argument \texttt{size}:
+\begin{itemize}
+\item If \texttt{right - left} $\ge$ \texttt{size}, the thread launches two threads and waits for their termination;
+\item If \texttt{right - left < size}, the thread launches two standard quicksort procedures and then terminates.
+\end{itemize}
+
+\end{document}

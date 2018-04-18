@@ -77,6 +77,7 @@ int main(int argc, char** argv) {
 		printf("%d; ", f[i]);
 	printf("\n");
 
+	close(fd);
 	pthread_exit(0);
 }
 
@@ -113,6 +114,8 @@ void* quicksort_thread(void* argument) {
 		quicksort(argRight->left, argRight->right);
 	}
 
+	free(argLeft);
+	free(argRight);
 	pthread_exit(NULL);
 }
 

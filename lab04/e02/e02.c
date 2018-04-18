@@ -146,20 +146,15 @@ void* concurrentProduct(void* argument) {
 	int i = arg->index;
 	arg->intermediateArray[i] = scalarProduct(arg->v2, arg->m[i], arg->size);
 
+	pthread_mutex_lock(&mutex);
 	int usecs = rand() % (MAX_SLEEP_TIME - MIN_SLEEP_TIME + 1) + MIN_SLEEP_TIME;
 	usleep(usecs * 1000);
-
-	pthread_mutex_lock(&mutex);
 	counter++;
-	if(counter < arg->size) {
-		pthread_mutex_unlock(&mutex);
-		printf("Thread %d terminated\n", i);
-		pthread_exit(NULL);
+	if(counter >= arg->size) {
+		/* Here, last thread */
+		counter = 0;
+		result = scalarProduct(arg->v1, arg->intermediateArray, arg->size);
 	}
-
-	/* Here, last thread */
-	result = scalarProduct(arg->v1, arg->intermediateArray, arg->size);
-
 	pthread_mutex_unlock(&mutex);
 	printf("Thread %d terminated\n", i);
 	pthread_exit(NULL);

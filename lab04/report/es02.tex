@@ -1,0 +1,30 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 4}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 4 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+First, it is needed to check that the number of arguments is correct, otherwise the program will exit and return the value 1.
+
+Then, it is needed to check that the second argument represents a correct size for an array or a matrix, i.e.\@ a strict positive number, otherwise the program will exit and return the value 2.
+
+After the allocation of \texttt{v1}, \texttt{v2} and \texttt{mat}, the main program creates \texttt{k} threads, passing to them:
+\begin{itemize}
+\item \texttt{k}, i.e.\@ size of the arrays \texttt{v1}, \texttt{v2} and the square matrix \texttt{mat};
+\item pointers to \texttt{v1}, \texttt{v2} and \texttt{mat};
+\item pointer \texttt{intermediateArray}, pointing to an intermediate array in which store the intermediate product \texttt{mat * v2};
+\item \texttt{index}, indicating on which of the matrix and intermediate array the thread has to work.
+\end{itemize}
+and waits for their termination. Then, it simply print the result;
+
+Each thread performs the scalar product between the \texttt{index}-th row of the matrix \texttt{mat} and the array \texttt{v2}, stores the result in the array \texttt{intermediateArray} in position \texttt{index} and, in mutual exclusion, increments a global counter in order to exploit a synchronization barrier paradigm. In this way, the last thread is able to recognize such a situation and it executes the scalar product between \texttt{v1} and the intermediate array, producing the desired result in a global variable seen by the main program.
+\end{document}
