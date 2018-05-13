@@ -42,13 +42,13 @@ INT _tmain(INT argc, LPTSTR argv[]) {
 	hOut = CreateFile(argv[2], GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if(hOut == INVALID_HANDLE_VALUE) {
-		_ftprintf(stderr, _T("Cannot open output file %s. Error: %x\n"), 
+		_ftprintf(stderr, _T("Cannot open output file %s. Error: %x\n"),
 			argv[2], GetLastError());
 		fclose(fpIn);
 		return 3;
 	}
 
-	while(_ftscanf(fpIn, _T("%d %ld %s %s %d"), 
+	while(_ftscanf(fpIn, _T("%d %ld %s %s %d"),
 		&s.id, &s.rn, &s.name, &s.surname, &s.mark) == 5) {
 		_tprintf(_T("Student read: %d %ld %s %s %d\n"),
 			s.id, s.rn, s.name, s.surname, s.mark);
@@ -72,7 +72,6 @@ INT _tmain(INT argc, LPTSTR argv[]) {
 	if(hIn == INVALID_HANDLE_VALUE) {
 		_ftprintf(stderr, _T("Cannot open output file %s. Error: %x\n"),
 			argv[2], GetLastError());
-		fclose(fpIn);
 		return 5;
 	}
 
@@ -84,7 +83,7 @@ INT _tmain(INT argc, LPTSTR argv[]) {
 	}
 
 	CloseHandle(hIn);
-	
+
 	Sleep(5000);
 	return 0;
 }
