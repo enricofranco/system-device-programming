@@ -1,0 +1,35 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 8}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 8 - Exercise 3}
+\begin{document}
+\section*{Exercise 3}
+
+First, it is needed to check that the number of arguments is correct, otherwise
+the program will exit and return the value 1.
+
+A single \texttt{HANDLE} is sufficient to solve this exercise if \texttt{dwAccess} is set to \texttt{GENERIC\_READ | GENERIC\_WRITE}, i.e.\@ both reading and writing, \texttt{dwCreate} is set to \texttt{OPEN\_ALWAYS}, i.e.\@ database already exists.
+
+At the beginning, the content of the file taken using \texttt{ReadFile} and displayed on screen to ensure its correctness.
+
+\begin{enumerate}[label=Version \Alph*]
+\item In order to use \texttt{SetFilePointerEx}, a \texttt{LARGE\_INTEGER pointer} has to be filled. Thus, since offset in the file starts from zero, \texttt{position} must be decremented and then multiplied by \texttt{sizeof(student\_t)}, which represent the size of a single ``record'' in the file. Once the pointer is set, common \texttt{ReadFile} and \texttt{WriteFile} can be used.
+\item In order to use the \texttt{OVERLAPPED} data structure, variable \texttt{OVERLAPPED o} is created. It is needed to set its \texttt{Offset} and \texttt{OffsetHigh} fields by assigning fields \texttt{LowPart} and \texttt{HighPart} of a \texttt{LARGE\_INTEGER pointer}, created as before, to \texttt{o.Offset} and \texttt{o.OffsetHigh}, respectively. Once \texttt{o} is set, \texttt{ReadFile} and \texttt{WriteFile} can be used by adding as last parameter the address of \texttt{o}, i.e.\@ \texttt{\&o}.
+\item In order to use \texttt{LockFileEx} (and \texttt{UnlockFileEx}), it is needed to prepare an \texttt{OVERLAPPED o} as described previously and create a \texttt{LARGE\_INTEGER size} which contains the size of a record, i.e.\@ size of region to lock. Once variable \texttt{o} and \texttt{size} are set, \texttt{LockFileEx} can be performed to lock the record, \texttt{ReadFile} and \texttt{WriteFile} can be used as in version B and finally the record can be unlocked using \texttt{UnlockFileEx}.
+\end{enumerate}
+
+Errors on \texttt{CreateFile}, used to create handle on file, and the number of correctly written bytes are checked and they will cause the termination of the called procedure.
+
+\end{document}

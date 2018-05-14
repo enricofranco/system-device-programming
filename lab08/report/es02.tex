@@ -1,0 +1,30 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 8}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 8 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+
+First, it is needed to check that the number of arguments is correct, otherwise
+the program will exit and return the value 1.
+
+Defining \texttt{UNICODE} and including \texttt{tchar}, it is possible to use \texttt{\_T} macro and functions which will be automatically converted to the UNICODE versions.
+
+Input file must be read using \texttt{\_ftscanf} because it is an ASCII file, i.e.\@ it must be interpreted as text, while output file must be written using Windows \texttt{WriteFile}, i.e.\@ binary serialized file.
+
+At the end of the copy, the generated file is read again, using Windows \texttt{ReadFile} this time and printing read data on screen to ensure that data has been copied correctly.
+
+Errors on \texttt{\_tfopen}, used to allocate the file pointer on input file, \texttt{CreateFile}, used to create handles on output file, and the number of correctly written bytes are checked and they will cause the termination of the process, returning a recognizable error code, i.e.\@ different from the ``canonical'' zero.
+
+\end{document}

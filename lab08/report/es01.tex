@@ -1,0 +1,27 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 8}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 8 - Exercise 1}
+\begin{document}
+\section*{Exercise 1}
+
+The goal of the proposed program is to copy a file, with name given on \texttt{argv[1]}, on a file with name given on \texttt{argv[2]}.
+
+Three syntax errors were discovered by Visual Studio on line 21: \\
+\texttt{fprint("Cannot open input file. Error: \%x \textbackslash n", GetLastError());} \\
+because the call does not match the \texttt{fprintf} prototype. It is needed to insert a \texttt{FILE*} argument, i.e.\@ \texttt{stderr} in this case, as first argument. This will solve all three syntax errors.
+
+Bug is on line 34.: \\
+\texttt{WriteFile(hOut, buffer, BUF\_SIZE, \&nOut, NULL);} which should always write \texttt{\textbf{BUF\_SIZE}} bytes in the output file. This is wrong because only \texttt{nIn} bytes, i.e.\@ the ones read before, can be written. Replacing \texttt{BUF\_SIZE} with \texttt{nIn} will solve the problem.
+
+\end{document}
