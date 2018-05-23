@@ -1,0 +1,33 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 9}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 9 - Exercise 3}
+\begin{document}
+\section*{Exercise 3}
+
+First, it is needed to check that the number of arguments is correct, otherwise
+the program will exit and return the value 1.
+
+In order to create \texttt{n} threads, two arrays are needed: one storing \texttt{HANDLE}s and one storing the parameters for each thread. In this case, structure \texttt{parameter\_t} simply stores the starting pathname from where begin the recursive visit.
+
+After thread creation, the main program starts waiting threads termination by means of \texttt{WaitForMultipleObjects}. When all threads are collected, it terminates.
+
+Function \texttt{Traverse} recursively visit directories and prints information of the visited directories on an open file pointed by \texttt{\_ftprintf}. A search handle is used to traverse the directory and a recursive call is made when a directory (different from \texttt{.}, i.e.\@ same directory, and \texttt{..}, i.e.\@ parent directory) is found. Before this recursive call, the pathname of the child directory is computed concatenating the \texttt{SourcePathName}, i.e.\@ current directory, and the filename of the current analyzed file.
+
+\begin{enumerate}[label=Version \Alph*]
+\item Output of different threads is interleaved on screen, therefore \texttt{stdout} is passed as the output file.
+\item Output of different threads is stored on different files identified by the thread identifier. Therefore, a file is created through system call \texttt{\_tfopen}, its file pointer is passed to function \texttt{Traverse} and, before thread termination, it is closed.
+\end{enumerate}
+\end{document}
