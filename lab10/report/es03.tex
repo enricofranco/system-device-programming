@@ -1,0 +1,25 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 10}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 10 - Exercise 2}
+\begin{document}
+\section*{Exercise 2}
+
+First, it is needed to check that the number of arguments is correct, i.e.,\@ greater than 3. Otherwise the program will exit and return the value 1.
+
+A semaphore for each reader thread is needed, in order to enable it to read an entry in the directory tree, initialized to one. A semaphore for the comparing thread is needed, in order to activate it when all threads have completed the reading of an entry, initialized to the number of threads.
+
+In order to increase a little bit performance, recursion in vising directories is interrupted when a difference is found in some pathname. This is done by comparing thread, which sets a boolean flag for each reading thread when a single difference is discovered.
+\end{document}
