@@ -1,0 +1,26 @@
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\textbf{System and device programming}}
+\rhead{Laboratory 11}
+\lfoot{Enrico Franco}
+\rfoot{Politecnico di Torino}
+\author{Enrico Franco}
+\title{System and Device Programming \\
+	Laboratory 11 - Exercise 3}
+\begin{document}
+\section*{Exercise 3}
+First, it is needed to check that the number of arguments is correct. Otherwise the program will exit and return the value 1.
+
+A semaphore is needed for each direction and one to notify if the tunnel busy, i.e.,\@ common resource, is busy or not.
+
+\texttt{THREADPARAMETER} structure contains two semaphores (one for the interesting direction and the ``busy'' one), an pointer to an  integer variable identifying the number of cars running in that direction and some parameter to randomize car arrivals and time spent to traverse the tunnel.
+
+The main program simply creates threads, one for each car from left to right and one for each car from right to left and waits for their termination. Since the problem is perfectly symmetric in both directions, a single function representing a car/thread is needed. This function is simply an implementation of the common \emph{Single Lane Tunnel} problem.
+\end{document}
